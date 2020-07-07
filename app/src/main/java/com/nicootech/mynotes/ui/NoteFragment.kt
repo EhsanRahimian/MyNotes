@@ -10,7 +10,7 @@ import androidx.navigation.Navigation
 import com.nicootech.mynotes.R
 import kotlinx.android.synthetic.main.fragment_note.*
 
-class NoteFragment : Fragment() {
+class NoteFragment : BaseFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

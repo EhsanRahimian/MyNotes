@@ -14,8 +14,9 @@ import com.nicootech.mynotes.dp.Note
 import com.nicootech.mynotes.dp.NoteDatabase
 import kotlinx.android.synthetic.main.fragment_add_new_note.*
 import kotlinx.android.synthetic.main.fragment_note.*
+import kotlinx.coroutines.launch
 
-class AddNewNoteFragment : Fragment() {
+class AddNewNoteFragment : BaseFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,27 +44,17 @@ class AddNewNoteFragment : Fragment() {
                 edit_text_note.requestFocus()
                 return@setOnClickListener
             }
-
-            val note = Note(noteTitle,noteBody)
-            saveNote(note)
+            launch {
+                val note = Note(noteTitle,noteBody)
+                context?.let{
+                    NoteDatabase(it).getNoteDao().addNote(note)
+                    Toast.makeText(activity,"Note Saved", Toast.LENGTH_SHORT).show()
+                }
+            }
 
         }
     }
 
-    private fun saveNote(note:Note){
-        class SaveNote :AsyncTask<Void,Void, Void>(){
-            override fun doInBackground(vararg params: Void?): Void? {
-                NoteDatabase(requireActivity()).getNoteDao().addNote(note)
-                return null
-            }
 
-            override fun onPostExecute(result: Void?) {
-                super.onPostExecute(result)
-                Toast.makeText(activity,"Note Saved", Toast.LENGTH_SHORT).show()
-            }
-
-        }
-        SaveNote().execute()
-    }
 
 }
