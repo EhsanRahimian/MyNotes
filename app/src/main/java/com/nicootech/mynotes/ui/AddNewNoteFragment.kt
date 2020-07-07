@@ -19,6 +19,8 @@ import kotlinx.coroutines.launch
 
 class AddNewNoteFragment : BaseFragment() {
 
+    private var note: Note? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -29,6 +31,12 @@ class AddNewNoteFragment : BaseFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        arguments?.let {
+            note = AddNewNoteFragmentArgs.fromBundle(it).note
+            edit_text_title.setText(note?.title)
+            edit_text_note.setText(note?.note)
+        }
 
         button_save.setOnClickListener{view->
             val noteTitle = edit_text_title.text.toString().trim()
@@ -46,10 +54,18 @@ class AddNewNoteFragment : BaseFragment() {
                 return@setOnClickListener
             }
             launch {
-                val note = Note(noteTitle,noteBody)
+
                 context?.let{
-                    NoteDatabase(it).getNoteDao().addNote(note)
-                    Toast.makeText(activity,"Note Saved", Toast.LENGTH_SHORT).show()
+                    val mNote = Note(noteTitle,noteBody)
+
+                    if(note == null){
+                        NoteDatabase(it).getNoteDao().addNote(mNote)
+                        Toast.makeText(activity,"Note Saved", Toast.LENGTH_SHORT).show()
+                    }else{
+                        mNote.id = note!!.id
+                        NoteDatabase(it).getNoteDao().updateNote(mNote)
+                        Toast.makeText(activity,"Note Updated", Toast.LENGTH_SHORT).show()
+                    }
 
                     val action = AddNewNoteFragmentDirections.actionAddNewNoteFragmentToNoteFragment()
                     Navigation.findNavController(view).navigate(action)
