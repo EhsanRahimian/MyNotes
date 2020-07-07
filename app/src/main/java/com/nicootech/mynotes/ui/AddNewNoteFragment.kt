@@ -1,11 +1,10 @@
 package com.nicootech.mynotes.ui
 
+import android.app.AlertDialog
 import android.os.AsyncTask
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.Navigation
 
@@ -25,6 +24,8 @@ class AddNewNoteFragment : BaseFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        setHasOptionsMenu(true)
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_add_new_note, container, false)
     }
@@ -73,6 +74,36 @@ class AddNewNoteFragment : BaseFragment() {
             }
 
         }
+    }
+
+    private fun deleteNote(){
+        AlertDialog.Builder(context).apply {
+            setTitle("Are You Sure?")
+            setMessage("You Cannot Undo This Operation")
+            setPositiveButton("Yes"){ _, _ ->
+                launch{
+                    NoteDatabase(context).getNoteDao().deleteNote(note!!)
+                    val action = AddNewNoteFragmentDirections.actionAddNewNoteFragmentToNoteFragment()
+                    Navigation.findNavController(requireView()).navigate(action)
+                }
+            }
+            setNegativeButton("No"){_, _ ->
+
+            }
+
+        }.create().show()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.delete->if(note!=null) deleteNote() else Toast.makeText(activity,"Cannot Delete", Toast.LENGTH_SHORT).show()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu,menu)
     }
 
 

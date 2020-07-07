@@ -1,9 +1,6 @@
 package com.nicootech.mynotes.dp
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 
 @Dao
 interface NoteDao {
@@ -18,4 +15,7 @@ interface NoteDao {
 
     @Update
     suspend fun updateNote(note: Note)
+
+    @Delete
+    suspend fun deleteNote(note: Note)
 }
