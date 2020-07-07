@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.Navigation
 
 import com.nicootech.mynotes.R
 import com.nicootech.mynotes.dp.Note
@@ -29,7 +30,7 @@ class AddNewNoteFragment : BaseFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        button_save.setOnClickListener{
+        button_save.setOnClickListener{view->
             val noteTitle = edit_text_title.text.toString().trim()
             val noteBody = edit_text_note.text.toString().trim()
 
@@ -49,6 +50,9 @@ class AddNewNoteFragment : BaseFragment() {
                 context?.let{
                     NoteDatabase(it).getNoteDao().addNote(note)
                     Toast.makeText(activity,"Note Saved", Toast.LENGTH_SHORT).show()
+
+                    val action = AddNewNoteFragmentDirections.actionAddNewNoteFragmentToNoteFragment()
+                    Navigation.findNavController(view).navigate(action)
                 }
             }
 
